@@ -1210,16 +1210,23 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         return fireOs;
     }
 
-    /** Half-size frame of the launcher for HomeWatchService's cover; null when there is nothing drawn yet. */
+    /**
+     * Full-resolution frame of the launcher for HomeWatchService's cover (Fire OS holds the launcher back for about
+     * five seconds after Home; this picture is what shows meanwhile). RGB_565 keeps it at 4 MB for 1080p; a half-size
+     * frame looked pixelated on a 4K TV.
+     */
     private Bitmap snapshot() {
         View v = getWindow().getDecorView();
         if (v.getWidth() == 0 || v.getHeight() == 0) return null;
         Bitmap b = HomeWatchService.snapshot;
-        if (b == null || b.getWidth() != v.getWidth() / 2 || b.getHeight() != v.getHeight() / 2) {
-            b = Bitmap.createBitmap(v.getWidth() / 2, v.getHeight() / 2, Bitmap.Config.RGB_565);
+        if (b == null || b.getWidth() != v.getWidth() || b.getHeight() != v.getHeight()) {
+            try {
+                b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.RGB_565);
+            } catch (OutOfMemoryError e) {
+                return HomeWatchService.snapshot;
+            }
         }
         Canvas c = new Canvas(b);
-        c.scale(0.5f, 0.5f);
         v.draw(c);
         return b;
     }
