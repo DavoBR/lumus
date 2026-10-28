@@ -1,0 +1,15 @@
+# Build output
+build/
+.gradle/
+*.apk
+*.aab
+local.properties
+.idea/
+*.iml
+captures/
+# Secrets never live in this repo (pushed to the device instead)
+*.keystore
+*.jks
+ha.json
+tmdb_token
+secrets/
